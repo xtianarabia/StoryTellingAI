@@ -1,0 +1,20 @@
+{
+  "name": "aistoryteller",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "react-native start"
+  },
+  "dependencies": {
+    "react": "18.2.0",
+    "react-native": "0.74.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.0",
+    "@babel/preset-env": "^7.20.0",
+    "@babel/runtime": "^7.20.0",
+    "babel-jest": "^29.6.3",
+    "metro-react-native-babel-preset": "0.77.0",
+    "react-test-renderer": "18.2.0"
+  }
+}
