@@ -30,6 +30,11 @@ function App() {
 
   return (
     <div className="App">
+      <div className="background-container">
+        <div className="cloud cloud-1"></div>
+        <div className="cloud cloud-2"></div>
+        <div className="cloud cloud-3"></div>
+      </div>
       <header className="App-header">
         <h1>AI Storyteller</h1>
       </header>
