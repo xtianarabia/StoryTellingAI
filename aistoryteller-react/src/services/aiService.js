@@ -50,7 +50,7 @@ const mockAIService = {
 };
 
 // --- Real AI Service ---
-const API_KEY = "AIzaSyCjziK4crj6LHNYfdH8zcYcy55A1j2VRvw"; // IMPORTANT: Replace with your actual API key
+const API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 const realAIService = {
