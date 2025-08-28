@@ -10,6 +10,21 @@ function App() {
   const [storyHistory, setStoryHistory] = useState([]);
 
   useEffect(() => {
+    const rainContainer = document.querySelector('.rain');
+    if (rainContainer) {
+      // Clear existing drops before adding new ones
+      rainContainer.innerHTML = '';
+      for (let i = 0; i < 100; i++) {
+        const drop = document.createElement('div');
+        drop.classList.add('drop');
+        drop.style.left = `${Math.random() * 100}vw`;
+        drop.style.animationDelay = `${Math.random() * -20}s`;
+        rainContainer.appendChild(drop);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     const fetchStoryPart = async () => {
       const prompt = createPrompt(storyKey, storyHistory);
       const part = await aiService.getStoryPart(prompt);
@@ -30,11 +45,8 @@ function App() {
 
   return (
     <div className="App">
-      <div className="background-container">
-        <div className="cloud cloud-1"></div>
-        <div className="cloud cloud-2"></div>
-        <div className="cloud cloud-3"></div>
-      </div>
+      <div className="rain"></div>
+      <div className="lightning"></div>
       <header className="App-header">
         <h1>AI Storyteller</h1>
       </header>
