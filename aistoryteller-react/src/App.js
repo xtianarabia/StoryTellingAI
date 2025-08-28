@@ -25,6 +25,21 @@ function App() {
   }, []);
 
   useEffect(() => {
+    const lightning = document.querySelector('.lightning');
+    if (lightning) {
+      const flash = () => {
+        lightning.style.animation = 'none';
+        void lightning.offsetWidth; // Trigger reflow
+        lightning.style.animation = null;
+        const randomDelay = Math.random() * 7 + 8; // Random delay between 8 and 15 seconds
+        lightning.style.animationDelay = `${randomDelay}s`;
+      };
+      lightning.addEventListener('animationiteration', flash);
+      flash(); // Initial flash
+    }
+  }, []);
+
+  useEffect(() => {
     const fetchStoryPart = async () => {
       const prompt = createPrompt(storyKey, storyHistory);
       const part = await aiService.getStoryPart(prompt);
