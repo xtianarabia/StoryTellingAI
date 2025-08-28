@@ -1,24 +1,13 @@
-@import url('https://fonts.googleapis.com/css2?family=Creepster&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400&display=swap');
 
 body {
-  background-color: #000; /* Black */
-  font-family: 'Creepster', cursive;
-  color: #fff;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
+  background-color: #2c3e50; /* Midnight Blue */
+  font-family: 'Roboto', sans-serif;
+  color: #ecf0f1; /* Clouds */
 }
 
 .App {
   text-align: center;
-  width: 100%;
-}
-
-.main-content {
-  position: relative;
-  z-index: 1;
 }
 
 .App-header {
@@ -29,25 +18,26 @@ body {
 
 .App-header h1 {
   margin: 0;
+  font-family: 'Playfair Display', serif;
   font-size: 3em;
-  text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ff00de, 0 0 40px #ff00de, 0 0 50px #ff00de, 0 0 60px #ff00de, 0 0 70px #ff00de;
+  color: #f1c40f; /* Sunflower */
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
 }
 
 .story-container {
-  background-color: rgba(0,0,0,0.5);
-  border-radius: 20px;
+  background-color: rgba(0,0,0,0.3);
+  border-radius: 10px;
   padding: 30px;
   margin: 30px auto;
   width: 80%;
-  max-width: 600px;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-  border: 2px solid #fff;
+  max-w: 600px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  border: 1px solid #f1c40f;
 }
 
 .story-text {
-  font-size: 1.8em;
+  font-size: 1.5em;
   line-height: 1.6;
-  font-family: 'Nunito', sans-serif;
 }
 
 .choices-container {
@@ -55,96 +45,23 @@ body {
   flex-direction: column;
   gap: 15px;
   width: 80%;
-  max-width: 600px;
+  max-w: 600px;
   margin: 0 auto;
 }
 
 button {
-  background-color: #4a0d67; /* Dark Purple */
-  color: #ffffff;
-  border: 2px solid #fff;
-  border-radius: 15px;
-  padding: 20px;
+  background-color: #f1c40f; /* Sunflower */
+  color: #2c3e50; /* Midnight Blue */
+  border: none;
+  border-radius: 5px;
+  padding: 15px;
   font-size: 1.2em;
-  font-family: 'Creepster', cursive;
+  font-family: 'Playfair Display', serif;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-  text-transform: uppercase;
-  letter-spacing: 2px;
 }
 
 button:hover {
-  background-color: #6c1e95;
+  background-color: #f39c12; /* Orange */
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-}
-
-button:active {
-  transform: translateY(1px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-/* --- Rain Animation --- */
-.rain {
-    position: absolute;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-}
-
-.rain.back-row {
-    display: block;
-    z-index: 0;
-    bottom: 60px;
-    opacity: 0.5;
-}
-
-.rain .drop {
-    position: absolute;
-    bottom: 100%;
-    width: 15px;
-    height: 120px;
-    pointer-events: none;
-    background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.25));
-    animation: drop 0.5s linear infinite;
-}
-
-@keyframes drop {
-    0% {
-        transform: translateY(0vh);
-    }
-    75% {
-        transform: translateY(90vh);
-    }
-    100% {
-        transform: translateY(90vh);
-    }
-}
-
-/* --- Lightning Animation --- */
-.lightning {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: white;
-  z-index: -2;
-  opacity: 0;
-  animation: flash 10s linear infinite; /* Less frequent */
-  animation-delay: 5s;
-}
-
-@keyframes flash {
-  0%, 100% {
-    opacity: 0;
-  }
-  1%, 3% { /* Quicker flash */
-    opacity: 1;
-  }
-  2%, 4% {
-    opacity: 0;
-  }
 }
