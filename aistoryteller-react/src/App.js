@@ -10,6 +10,32 @@ function App() {
   const [storyHistory, setStoryHistory] = useState([]);
 
   useEffect(() => {
+    const rainContainer = document.querySelector('.rain.front-row');
+    const rainContainerBack = document.querySelector('.rain.back-row');
+    if (rainContainer && rainContainerBack) {
+      rainContainer.innerHTML = '';
+      rainContainerBack.innerHTML = '';
+      for (let i = 0; i < 100; i++) {
+        const drop = document.createElement('div');
+        drop.classList.add('drop');
+        drop.style.left = `${Math.random() * 100}vw`;
+        drop.style.animationDelay = `${Math.random() * -20}s`;
+
+        const dropBack = document.createElement('div');
+        dropBack.classList.add('drop');
+        dropBack.style.left = `${Math.random() * 100}vw`;
+        dropBack.style.animationDelay = `${Math.random() * -20}s`;
+
+        if (i % 2 === 0) {
+            rainContainer.appendChild(drop);
+        } else {
+            rainContainerBack.appendChild(dropBack);
+        }
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     const fetchStoryPart = async () => {
       const prompt = createPrompt(storyKey, storyHistory);
       const part = await aiService.getStoryPart(prompt);

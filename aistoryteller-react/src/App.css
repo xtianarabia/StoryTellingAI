@@ -133,18 +133,18 @@ button:active {
   background: white;
   z-index: -2;
   opacity: 0;
-  animation: flash 5s linear infinite;
-  animation-delay: 3s;
+  animation: flash 10s linear infinite; /* Less frequent */
+  animation-delay: 5s;
 }
 
 @keyframes flash {
   0%, 100% {
     opacity: 0;
   }
-  2%, 8% {
+  1%, 3% { /* Quicker flash */
     opacity: 1;
   }
-  3%, 7% {
+  2%, 4% {
     opacity: 0;
   }
 }
