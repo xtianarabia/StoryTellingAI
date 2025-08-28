@@ -18,7 +18,7 @@ function App() {
     };
 
     fetchStoryPart();
-  }, [storyKey]);
+  }, [storyKey, storyHistory]);
 
   const handleChoice = (nextPart) => {
     setStoryKey(nextPart);
@@ -30,13 +30,18 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>AI Storyteller</h1>
-      </header>
-      <main>
-        <Story text={currentStoryPart.text} />
-        <Choices choices={currentStoryPart.choices} onChoiceSelected={handleChoice} />
-      </main>
+      <div className="rain front-row"></div>
+      <div className="rain back-row"></div>
+      <div className="lightning"></div>
+      <div className="main-content">
+        <header className="App-header">
+          <h1>AI Storyteller</h1>
+        </header>
+        <main>
+          <Story text={currentStoryPart.text} />
+          <Choices choices={currentStoryPart.choices} onChoiceSelected={handleChoice} />
+        </main>
+      </div>
     </div>
   );
 }
