@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/StoryTellingAI/static/css/main.9d1b202f.css",
-    "main.js": "/StoryTellingAI/static/js/main.3039392f.js",
+    "main.js": "/StoryTellingAI/static/js/main.36baf391.js",
     "static/js/453.cf57cf6e.chunk.js": "/StoryTellingAI/static/js/453.cf57cf6e.chunk.js",
     "index.html": "/StoryTellingAI/index.html",
     "main.9d1b202f.css.map": "/StoryTellingAI/static/css/main.9d1b202f.css.map",
-    "main.3039392f.js.map": "/StoryTellingAI/static/js/main.3039392f.js.map",
+    "main.36baf391.js.map": "/StoryTellingAI/static/js/main.36baf391.js.map",
     "453.cf57cf6e.chunk.js.map": "/StoryTellingAI/static/js/453.cf57cf6e.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.9d1b202f.css",
-    "static/js/main.3039392f.js"
+    "static/js/main.36baf391.js"
   ]
 }
