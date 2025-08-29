@@ -18,7 +18,7 @@ function App() {
     };
 
     fetchStoryPart();
-  }, [storyKey, storyHistory]);
+  }, [storyKey]); // The only dependency should be storyKey
 
   const handleChoice = (nextPart) => {
     setStoryKey(nextPart);

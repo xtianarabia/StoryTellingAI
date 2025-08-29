@@ -56,8 +56,10 @@ const genAI = new GoogleGenerativeAI(API_KEY);
 const realAIService = {
     getStoryPart: async (prompt) => {
         const MAX_RETRIES = 3;
+        let attempt = 0;
+        let delay = 1000; // Start with a 1-second delay
 
-        const execute = async (attempt, delay) => {
+        while (attempt < MAX_RETRIES) {
             try {
                 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
                 const result = await model.generateContent(prompt);
@@ -73,10 +75,11 @@ const realAIService = {
                 return storyPart;
 
             } catch (error) {
-                if (error.message.includes("503") && attempt < MAX_RETRIES) {
+                if (error.message.includes("503")) {
                     console.warn(`Attempt ${attempt + 1} failed with 503 error. Retrying in ${delay / 1000} seconds...`);
                     await new Promise(resolve => setTimeout(resolve, delay));
-                    return execute(attempt + 1, delay * 2);
+                    delay *= 2; // Exponential backoff
+                    attempt++;
                 } else {
                     console.error("Error calling the AI service:", error);
                     // Fallback to mock service for other errors
@@ -85,10 +88,10 @@ const realAIService = {
             }
         }
 
-        return execute(0, 1000);
+        console.error("All retry attempts failed. Falling back to mock service.");
+        return mockAIService.getStoryPart('start');
     }
 };
-
 
 // --- Service Configuration ---
 const useRealAI = true; // Set to true to use the real AI service
