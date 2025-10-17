@@ -46,6 +46,11 @@ const mockAIService = {
         return new Promise((resolve) => {
             resolve(mockStoryData[part]);
         });
+    },
+    generateVideo: async (prompt) => {
+        console.log("Mock video generation for prompt:", prompt);
+        // Return a dummy video URL for the mock service after a short delay
+        return new Promise(resolve => setTimeout(() => resolve("https://storage.googleapis.com/generativeai-downloads/images/sample.mp4"), 2000));
     }
 };
 
@@ -90,6 +95,32 @@ const realAIService = {
 
         console.error("All retry attempts failed. Falling back to mock service.");
         return mockAIService.getStoryPart('start');
+    },
+
+    generateVideo: async (prompt) => {
+        try {
+            const model = genAI.getGenerativeModel({ model: "veo-3.1-generate-preview" });
+            let operation = await model.generateVideos({ prompt });
+
+            console.log("Video generation started. Polling for completion...");
+
+            while (!operation.done) {
+                await new Promise((resolve) => setTimeout(resolve, 10000));
+                operation = await genAI.operations.getVideosOperation({ operation });
+            }
+
+            console.log("Video generation complete.");
+            const generatedVideo = operation.response.generatedVideos[0];
+
+            // IMPORTANT: A backend is required to download and serve the video.
+            // This implementation simulates the process and returns a placeholder URL.
+            console.log("Generated video data (requires backend to access):", generatedVideo);
+            return "https://storage.googleapis.com/generativeai-downloads/images/sample.mp4";
+
+        } catch (error) {
+            console.error("Error calling the AI video service:", error);
+            return "https://storage.googleapis.com/generativeai-downloads/images/error.mp4";
+        }
     }
 };
 
