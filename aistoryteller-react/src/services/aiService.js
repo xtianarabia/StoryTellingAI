@@ -99,26 +99,23 @@ const realAIService = {
 
     generateVideo: async (prompt) => {
         try {
-            const model = genAI.getGenerativeModel({ model: "veo-3.1-generate-preview" });
-            let operation = await model.generateVideos({ prompt });
+            const response = await fetch('http://localhost:3001/api/generate-video', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ prompt }),
+            });
 
-            console.log("Video generation started. Polling for completion...");
-
-            while (!operation.done) {
-                await new Promise((resolve) => setTimeout(resolve, 10000));
-                operation = await genAI.operations.getVideosOperation({ operation });
+            if (!response.ok) {
+                throw new Error('Failed to generate video');
             }
 
-            console.log("Video generation complete.");
-            const generatedVideo = operation.response.generatedVideos[0];
-
-            // IMPORTANT: A backend is required to download and serve the video.
-            // This implementation simulates the process and returns a placeholder URL.
-            console.log("Generated video data (requires backend to access):", generatedVideo);
-            return "https://storage.googleapis.com/generativeai-downloads/images/sample.mp4";
+            const data = await response.json();
+            return data.videoUrl;
 
         } catch (error) {
-            console.error("Error calling the AI video service:", error);
+            console.error("Error calling the backend video service:", error);
             return "https://storage.googleapis.com/generativeai-downloads/images/error.mp4";
         }
     }
