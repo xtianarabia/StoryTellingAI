@@ -1,7 +1,8 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { GoogleGenAI } = require('@google/genai');
+const { GoogleAuth } = require('google-auth-library');
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
@@ -13,8 +14,15 @@ app.use(cors());
 app.use(express.json());
 app.use('/videos', express.static(path.join(__dirname, 'videos')));
 
-const API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
-const genAI = new GoogleGenerativeAI(API_KEY);
+// --- Authentication and AI Client Setup ---
+// The GOOGLE_APPLICATION_CREDENTIALS environment variable in the .env file
+// points to the service account key file. The GoogleAuth library
+// automatically finds and uses it.
+const auth = new GoogleAuth({
+    scopes: 'https://www.googleapis.com/auth/cloud-platform',
+});
+const genAI = new GoogleGenAI({ auth });
+
 
 // Create the videos directory if it doesn't exist
 const videosDir = path.join(__dirname, 'videos');
@@ -32,19 +40,22 @@ app.post('/api/generate-video', async (req, res) => {
 
     try {
         console.log("Generating video with prompt:", prompt);
-        const model = genAI.getGenerativeModel({ model: "veo-3.1-generate-preview" });
-        let operation = await model.generateVideos({ prompt });
+
+        const operation = await genAI.models.generateVideos({
+            model: 'veo-2', // Ensure this model is available in your project
+            prompt: prompt,
+        });
 
         console.log("Video generation started. Polling for completion...");
 
         while (!operation.done) {
             await new Promise((resolve) => setTimeout(resolve, 10000));
-            operation = await genAI.operations.getVideosOperation({ operation });
+            operation = await genAI.operations.getVideosOperation({ name: operation.name });
         }
 
         console.log("Video generation complete.");
         const generatedVideo = operation.response.generatedVideos[0];
-        console.log("Inspecting generatedVideo object:", generatedVideo);
+        console.log("Generated video details:", generatedVideo);
 
         const videoFileName = `${Date.now()}.mp4`;
         const videoPath = path.join(videosDir, videoFileName);
@@ -56,16 +67,20 @@ app.post('/api/generate-video', async (req, res) => {
             response.pipe(videoFile);
             videoFile.on('finish', () => {
                 const videoUrl = `${req.protocol}://${req.get('host')}/videos/${videoFileName}`;
+                console.log("Video successfully downloaded and saved. URL:", videoUrl);
                 res.json({ videoUrl });
             });
         }).on('error', (err) => {
-            console.error("Error downloading video:", err);
-            res.status(500).json({ error: 'Failed to download video' });
+            console.error("Error downloading the video file:", err);
+            res.status(500).json({ error: 'Failed to download video file' });
         });
 
     } catch (error) {
-        console.error("Full error object:", JSON.stringify(error, null, 2));
-        res.status(500).json({ error: 'Failed to generate video', details: error.message });
+        console.error("An error occurred during the video generation process:", error);
+        res.status(500).json({
+            error: 'Failed to generate video',
+            details: error.message || 'An unknown error occurred.'
+        });
     }
 });
 
