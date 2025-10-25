@@ -46,6 +46,11 @@ const mockAIService = {
         return new Promise((resolve) => {
             resolve(mockStoryData[part]);
         });
+    },
+    generateVideo: async (prompt) => {
+        console.log("Mock video generation for prompt:", prompt);
+        // Return a dummy video URL for the mock service after a short delay
+        return new Promise(resolve => setTimeout(() => resolve("https://storage.googleapis.com/generativeai-downloads/images/sample.mp4"), 2000));
     }
 };
 
@@ -90,6 +95,29 @@ const realAIService = {
 
         console.error("All retry attempts failed. Falling back to mock service.");
         return mockAIService.getStoryPart('start');
+    },
+
+    generateVideo: async (prompt) => {
+        try {
+            const response = await fetch('http://localhost:3001/api/generate-video', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ prompt }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to generate video');
+            }
+
+            const data = await response.json();
+            return data.videoUrl;
+
+        } catch (error) {
+            console.error("Error calling the backend video service:", error);
+            return "https://storage.googleapis.com/generativeai-downloads/images/error.mp4";
+        }
     }
 };
 
