@@ -1,7 +1,8 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { GoogleGenAI } = require('@google/genai');
+const { GoogleAuth } = require('google-auth-library');
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
@@ -13,16 +14,15 @@ app.use(cors());
 app.use(express.json());
 app.use('/videos', express.static(path.join(__dirname, 'videos')));
 
-// --- Simple API Key Authentication ---
-const API_KEY = process.env.GOOGLE_API_KEY;
+// --- Authentication and AI Client Setup ---
+// The GOOGLE_APPLICATION_CREDENTIALS environment variable in the .env file
+// points to the service account key file. The GoogleAuth library
+// automatically finds and uses it.
+const auth = new GoogleAuth({
+    scopes: 'https://www.googleapis.com/auth/cloud-platform',
+});
+const genAI = new GoogleGenAI({ auth });
 
-if (!API_KEY || API_KEY === "YOUR_API_KEY_HERE") {
-  console.error("FATAL ERROR: GOOGLE_API_KEY is not set in the .env file.");
-  console.error("Please create a .env file in the aistoryteller-backend directory and add your key from Google AI Studio.");
-  process.exit(1);
-}
-
-const genAI = new GoogleGenerativeAI(API_KEY);
 
 // Create the videos directory if it doesn't exist
 const videosDir = path.join(__dirname, 'videos');
@@ -41,24 +41,39 @@ app.post('/api/generate-video', async (req, res) => {
     try {
         console.log("Generating video with prompt:", prompt);
 
-        // NOTE: The @google/generative-ai library does not have a direct `generateVideos` method.
-        // This is a placeholder call. If this fails, it confirms the library limitation.
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" }); // Using a standard model
-        const result = await model.generateContent(`Generate a short, 5-second video description for this prompt, which will be used to create a video: ${prompt}`);
+        const operation = await genAI.models.generateVideos({
+            model: 'veo-2', // Ensure this model is available in your project
+            prompt: prompt,
+        });
 
-        // This part is a simulation, as the library does not support video generation directly.
-        // We will simulate the process by creating a dummy video file.
-        console.log("Simulating video generation based on description:", result.response.text());
+        console.log("Video generation started. Polling for completion...");
+
+        while (!operation.done) {
+            await new Promise((resolve) => setTimeout(resolve, 10000));
+            operation = await genAI.operations.getVideosOperation({ name: operation.name });
+        }
+
+        console.log("Video generation complete.");
+        const generatedVideo = operation.response.generatedVideos[0];
+        console.log("Generated video details:", generatedVideo);
 
         const videoFileName = `${Date.now()}.mp4`;
         const videoPath = path.join(videosDir, videoFileName);
 
-        // Create a dummy file to represent the video
-        fs.writeFileSync(videoPath, 'dummy video content');
+        const videoUri = generatedVideo.video.uri;
+        const videoFile = fs.createWriteStream(videoPath);
 
-        const videoUrl = `${req.protocol}://${req.get('host')}/videos/${videoFileName}`;
-        console.log("Video successfully simulated. URL:", videoUrl);
-        res.json({ videoUrl });
+        https.get(videoUri, (response) => {
+            response.pipe(videoFile);
+            videoFile.on('finish', () => {
+                const videoUrl = `${req.protocol}://${req.get('host')}/videos/${videoFileName}`;
+                console.log("Video successfully downloaded and saved. URL:", videoUrl);
+                res.json({ videoUrl });
+            });
+        }).on('error', (err) => {
+            console.error("Error downloading the video file:", err);
+            res.status(500).json({ error: 'Failed to download video file' });
+        });
 
     } catch (error) {
         console.error("An error occurred during the video generation process:", error);
