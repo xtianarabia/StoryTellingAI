@@ -43,7 +43,7 @@ app.post('/api/generate-video', async (req, res) => {
 
         // NOTE: The @google/generative-ai library does not have a direct `generateVideos` method.
         // This is a placeholder call. If this fails, it confirms the library limitation.
-        const model = genAI.getGenerativeModel({ model: "gemini-pro" }); // Using a standard model
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" }); // Using a standard model
         const result = await model.generateContent(`Generate a short, 5-second video description for this prompt, which will be used to create a video: ${prompt}`);
 
         // This part is a simulation, as the library does not support video generation directly.
@@ -64,19 +64,6 @@ app.post('/api/generate-video', async (req, res) => {
         console.error("An error occurred during the video generation process:", error);
         res.status(500).json({
             error: 'Failed to generate video',
-            details: error.message || 'An unknown error occurred.'
-        });
-    }
-});
-
-app.get('/api/list-models', async (req, res) => {
-    try {
-        const result = await genAI.listModels();
-        res.json(result);
-    } catch (error) {
-        console.error("An error occurred while listing models:", error);
-        res.status(500).json({
-            error: 'Failed to list models',
             details: error.message || 'An unknown error occurred.'
         });
     }
